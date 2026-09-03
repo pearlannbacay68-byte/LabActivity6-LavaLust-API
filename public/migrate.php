@@ -17,7 +17,7 @@ try {
     // Drop old table if it exists (to fix column names)
     $pdo->exec("DROP TABLE IF EXISTS users");
 
-    // Create table with correct column names
+    // Create table with correct column names (matching users_view.php)
     $pdo->exec("
         CREATE TABLE users (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +38,7 @@ try {
         ('Jose', 'Mendoza', 'jose@example.com', 'josemendoza')
     ");
 
-    echo "✅ Table recreated with correct column names and sample data inserted!";
+    echo "✅ Table recreated with correct column names (firstname, lastname) and sample data inserted!";
 } catch (PDOException $e) {
     echo "❌ Error: " . $e->getMessage();
 }
