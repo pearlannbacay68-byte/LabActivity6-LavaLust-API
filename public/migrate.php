@@ -14,32 +14,31 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    // Create table
+    // Drop old table if it exists (to fix column names)
+    $pdo->exec("DROP TABLE IF EXISTS users");
+
+    // Create table with correct column names
     $pdo->exec("
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE users (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            first_name VARCHAR(100) NOT NULL,
-            last_name VARCHAR(100) NOT NULL,
+            firstname VARCHAR(100) NOT NULL,
+            lastname VARCHAR(100) NOT NULL,
             email VARCHAR(150) NOT NULL UNIQUE,
             username VARCHAR(100) NOT NULL UNIQUE
         )
     ");
 
-    // Insert sample data (only if table is empty)
-    $count = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-    if ($count == 0) {
-        $pdo->exec("
-            INSERT INTO users (first_name, last_name, email, username) VALUES
-            ('Juan', 'Dela Cruz', 'juan@example.com', 'juandelacruz'),
-            ('Maria', 'Santos', 'maria@example.com', 'mariasantos'),
-            ('Pedro', 'Garcia', 'pedro@example.com', 'pedrogarcia'),
-            ('Ana', 'Reyes', 'ana@example.com', 'anareyes'),
-            ('Jose', 'Mendoza', 'jose@example.com', 'josemendoza')
-        ");
-        echo "✅ Table created and sample data inserted successfully!";
-    } else {
-        echo "✅ Table already exists with $count row(s). No new data inserted.";
-    }
+    // Insert sample data
+    $pdo->exec("
+        INSERT INTO users (firstname, lastname, email, username) VALUES
+        ('Juan', 'Dela Cruz', 'juan@example.com', 'juandelacruz'),
+        ('Maria', 'Santos', 'maria@example.com', 'mariasantos'),
+        ('Pedro', 'Garcia', 'pedro@example.com', 'pedrogarcia'),
+        ('Ana', 'Reyes', 'ana@example.com', 'anareyes'),
+        ('Jose', 'Mendoza', 'jose@example.com', 'josemendoza')
+    ");
+
+    echo "✅ Table recreated with correct column names and sample data inserted!";
 } catch (PDOException $e) {
     echo "❌ Error: " . $e->getMessage();
 }
