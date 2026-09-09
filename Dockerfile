@@ -21,10 +21,10 @@ COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
-# Render provides the PORT environment variable — tell Apache to listen on it
-RUN sed -i 's/80/${PORT:-80}/g' /etc/apache2/ports.conf
-RUN sed -i 's/:80/:${PORT:-80}/g' /etc/apache2/sites-available/000-default.conf
+# Copy entrypoint script that sets up the PORT at runtime
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/entrypoint.sh"]
