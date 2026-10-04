@@ -85,7 +85,7 @@ $config['jwt_secret'] = getenv('JWT_SECRET') ?: '';
 | Used for Securing endpoint
 |
 */
-$config['refresh_token_key'] = getenv('REFRESH_TOKEN_KEY') ?: '';
+$config['refresh_token_key'] = getenv('REFRESH_TOKEN_KEY') ?: (getenv('REFRESH_TOKEN_SECRET') ?: '');
 
 /*
 |--------------------------------------------------------------------------

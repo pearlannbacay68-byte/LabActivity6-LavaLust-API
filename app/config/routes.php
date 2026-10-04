@@ -48,6 +48,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 // ===== API routes (Lab 6) =====
 $router->post('/api/auth/register', 'AuthApiController::register');
+$router->post('/api/auth/create', 'AuthApiController::register');
 $router->post('/api/auth/login', 'AuthApiController::login');
 $router->post('/api/auth/refresh', 'AuthApiController::refresh');
 $router->post('/api/auth/logout', 'AuthApiController::logout');
