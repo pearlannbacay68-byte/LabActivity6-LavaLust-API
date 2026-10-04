@@ -267,6 +267,12 @@ class Database {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         );
+           // SSL support (needed for Aiven MySQL)
+        $ssl_ca = isset($database_config['ssl_ca']) ? $database_config['ssl_ca'] : '';
+        if ($driver === 'mysql' && !empty($ssl_ca)) {
+            $ca_path = preg_match('#^(/|[A-Za-z]:[\\\\/])#', $ssl_ca) ? $ssl_ca : ROOT_DIR . $ssl_ca;
+            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca_path;
+        }
 
         try {
             $this->db = new PDO($dsn, $username, $password, $options);

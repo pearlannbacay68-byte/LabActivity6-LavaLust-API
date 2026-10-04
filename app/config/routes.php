@@ -43,17 +43,24 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |
 */
 /** @var object $router **/
+// Old web routes (Lab 4) and migration routes are disabled for the API deployment.
+// Run migrations from the CLI instead: php lava migration
 
-$router->get('/', 'AuthController::login');
-$router->get('/login', 'AuthController::login');
-$router->post('/auth/authenticate', 'AuthController::authenticate');
-$router->get('/auth/logout', 'AuthController::logout');
+// ===== API routes (Lab 6) =====
+$router->post('/api/auth/register', 'AuthApiController::register');
+$router->post('/api/auth/login', 'AuthApiController::login');
+$router->post('/api/auth/refresh', 'AuthApiController::refresh');
+$router->post('/api/auth/logout', 'AuthApiController::logout');
+$router->get('/api/auth/me', 'AuthApiController::me');
 
-$router->group(['middleware' => 'auth'], function ($router) {
-    $router->get('/products', 'ProductsController::index');
-    $router->get('/products/create', 'ProductsController::create');
-    $router->post('/products/store', 'ProductsController::store');
-    $router->get('/products/edit/{id}', 'ProductsController::edit')->where_number('id');
-    $router->post('/products/update/{id}', 'ProductsController::update')->where_number('id');
-    $router->get('/products/delete/{id}', 'ProductsController::delete')->where_number('id');
-});
+$router->get('/api/products', 'ProductApiController::index');
+$router->post('/api/products', 'ProductApiController::store');
+$router->get('/api/products/{id}', 'ProductApiController::show')->where_number('id');
+$router->put('/api/products/{id}', 'ProductApiController::update')->where_number('id');
+$router->patch('/api/products/{id}', 'ProductApiController::update')->where_number('id');
+$router->delete('/api/products/{id}', 'ProductApiController::destroy')->where_number('id');
+
+// CORS preflight (needed by the React/Vue app)
+$router->options('/api/auth/{action}', 'AuthApiController::preflight');
+$router->options('/api/products', 'ProductApiController::preflight');
+$router->options('/api/products/{id}', 'ProductApiController::preflight');

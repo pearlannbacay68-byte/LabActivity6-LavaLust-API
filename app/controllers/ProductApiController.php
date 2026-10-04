@@ -76,9 +76,11 @@ class ProductApiController extends Controller
             [$name, $description, $price, (int) $quantity]
         );
 
+                $new_id = $this->db->raw("SELECT LAST_INSERT_ID() AS id")->fetch(PDO::FETCH_ASSOC)['id'];
+
         $this->api->respond([
             'message' => 'Product created',
-            'data'    => $this->find($this->db->last_id()),
+            'data'    => $this->find((int) $new_id),
         ], 201);
     }
 
