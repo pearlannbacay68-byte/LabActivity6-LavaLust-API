@@ -44,7 +44,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 */
 /** @var object $router **/
 // ===== Server-rendered Stockroom pages =====
-$router->get('/', 'AuthController::index');
+$router->get('/', 'Welcome::index');
 $router->get('/login', 'AuthController::login');
 $router->get('/register', 'AuthController::register');
 $router->post('/auth/register', 'AuthController::create_account');
