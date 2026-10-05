@@ -17,11 +17,34 @@ class ProductsController extends Controller
 
     public function index()
     {
-        $products = $this->ProductModel->all();
+        $allProducts = $this->ProductModel->all();
+        $search = trim((string) $this->request->get('q', ''));
+        $summary = [
+            'products' => count($allProducts),
+            'units' => 0,
+            'value' => 0,
+            'low_stock' => 0,
+        ];
+
+        foreach ($allProducts as $product) {
+            $quantity = (int) $product['quantity'];
+            $summary['units'] += $quantity;
+            $summary['value'] += (float) $product['price'] * $quantity;
+            if ($quantity <= 5) {
+                $summary['low_stock']++;
+            }
+        }
+
+        $products = array_values(array_filter($allProducts, function ($product) use ($search) {
+            return $search === ''
+                || stripos((string) $product['product_name'], $search) !== false;
+        }));
         $session = $this->session();
 
         $this->call->view('products/index', [
             'products' => $products,
+            'summary' => $summary,
+            'search' => $search,
             'logged_in' => $session->userdata('logged_in') === true,
             'username' => $session->userdata('username')
         ]);

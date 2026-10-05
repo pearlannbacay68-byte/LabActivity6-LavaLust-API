@@ -3,150 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f8fafc;
-            color: #0f172a;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        h1 {
-            margin: 0;
-            color: #1d4ed8;
-        }
-        .actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background: #2563eb;
-            color: #fff;
-        }
-        .btn-danger {
-            background: #dc2626;
-            color: #fff;
-        }
-        .btn-muted {
-            background: #e2e8f0;
-            color: #1f2937;
-        }
-        .card {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-            overflow: hidden;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: left;
-            vertical-align: top;
-        }
-        th {
-            background: #eff6ff;
-            color: #1d4ed8;
-        }
-        .empty {
-            padding: 32px;
-            text-align: center;
-            color: #64748b;
-        }
-        .actions-inline {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .small {
-            color: #64748b;
-            font-size: 14px;
-        }
-    </style>
+    <meta name="theme-color" content="#0b0908">
+    <title>Products | Stockroom</title>
+    <link rel="stylesheet" href="<?= htmlspecialchars(base_url('css/stockroom.css')) ?>">
 </head>
-<body>
-    <div class="container">
-        <div class="topbar">
-            <div>
-                <h1>Products</h1>
-                <div class="small">Logged in as <?= htmlspecialchars($username ?? 'Guest') ?></div>
-            </div>
-            <div class="actions">
-                <?php if ($logged_in): ?>
-                    <a href="<?= site_url('products/create') ?>" class="btn btn-primary">Add Product</a>
-                    <a href="<?= site_url('auth/logout') ?>" class="btn btn-muted">Logout</a>
-                <?php else: ?>
-                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Login</a>
-                <?php endif; ?>
-            </div>
+<body class="page-shell dashboard">
+    <header class="topbar">
+        <a class="brand" href="<?= site_url('products') ?>" aria-label="Stockroom home">
+            <span>Stockroom</span>
+        </a>
+        <div class="account">
+            <span class="account-name"><?= htmlspecialchars($username ?? 'Guest') ?></span>
+            <?php if ($logged_in): ?>
+                <form class="inline-form" method="post" action="<?= site_url('auth/logout') ?>">
+                    <button class="btn btn-quiet" type="submit">Log out</button>
+                </form>
+            <?php else: ?>
+                <a href="<?= site_url('login') ?>" class="btn btn-quiet">Log in</a>
+            <?php endif; ?>
         </div>
+    </header>
+    <main class="page-content">
+        <section class="stock-summary" aria-label="Stock summary">
+            <div class="summary-stat">
+                <strong><?= number_format($summary['products']) ?></strong>
+                <span>products</span>
+            </div>
+            <div class="summary-stat">
+                <strong><?= number_format($summary['units']) ?></strong>
+                <span>units on hand</span>
+            </div>
+            <div class="summary-stat">
+                <strong><?= htmlspecialchars('₱' . number_format($summary['value'], 2)) ?></strong>
+                <span>stock value</span>
+            </div>
+            <div class="summary-stat">
+                <strong><?= number_format($summary['low_stock']) ?></strong>
+                <span>low on stock (≤ 5)</span>
+            </div>
+        </section>
+
+        <form class="search-form" method="get" action="<?= site_url('products') ?>">
+            <label class="visually-hidden" for="product-search">Search product name</label>
+            <input
+                id="product-search"
+                type="search"
+                name="q"
+                value="<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>"
+                placeholder="Search product name"
+            >
+        </form>
+
+        <?php if ($logged_in): ?>
+            <a href="<?= site_url('products/create') ?>" class="btn btn-primary add-product-button">Add product</a>
+        <?php endif; ?>
 
         <div class="card">
             <?php if (!empty($products)): ?>
-                <table>
+                <div class="table-scroll"><table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Product Name</th>
-                            <th>Description</th>
+                            <th>Product</th>
                             <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Created At</th>
+                            <th>Stock</th>
+                            <th>Added</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($products as $product): ?>
                             <tr>
-                                <td><?= htmlspecialchars($product['id']) ?></td>
-                                <td><?= htmlspecialchars($product['product_name']) ?></td>
-                                <td><?= htmlspecialchars($product['description']) ?></td>
-                                <td><?= htmlspecialchars($product['price']) ?></td>
-                                <td><?= htmlspecialchars($product['quantity']) ?></td>
-                                <td><?= htmlspecialchars($product['created_at']) ?></td>
+                                <td>
+                                    <span class="product-name"><?= htmlspecialchars($product['product_name']) ?></span>
+                                    <?php if (!empty($product['description'])): ?>
+                                        <span class="product-description"><?= htmlspecialchars($product['description']) ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="numeric"><?= htmlspecialchars('₱' . number_format((float) $product['price'], 2)) ?></td>
+                                <td><span class="quantity-pill"><?= number_format((int) $product['quantity']) ?></span></td>
+                                <td class="date-cell"><?= !empty($product['created_at']) ? htmlspecialchars(date('Y-m-d', strtotime($product['created_at']))) : '—' ?></td>
                                 <td>
                                     <?php if ($logged_in): ?>
                                         <div class="actions-inline">
-                                            <a href="<?= site_url('products/edit/' . $product['id']) ?>" class="btn btn-muted">Edit</a>
-                                            <a href="<?= site_url('products/delete/' . $product['id']) ?>" class="btn btn-danger" onclick="return confirm('Delete this product?');">Delete</a>
+                                            <a href="<?= site_url('products/edit/' . $product['id']) ?>" class="btn btn-quiet">Edit</a>
+                                            <form class="inline-form" method="post" action="<?= site_url('products/delete/' . $product['id']) ?>">
+                                                <button class="btn btn-danger" type="submit" onclick="return confirm('Delete this product?');">Delete</button>
+                                            </form>
                                         </div>
                                     <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
+            <?php elseif ($search !== ''): ?>
+                <div class="empty">No products match “<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8') ?>”.</div>
             <?php else: ?>
                 <div class="empty">No products found.</div>
             <?php endif; ?>
         </div>
-    </div>
+    </main>
 </body>
 </html>

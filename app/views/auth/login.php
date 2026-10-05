@@ -3,87 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Product Manager</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #eef2ff, #dbeafe);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .card {
-            width: min(420px, 90%);
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.2);
-            padding: 32px;
-        }
-        h2 {
-            margin-top: 0;
-            color: #1d4ed8;
-        }
-        .alert {
-            background: #fee2e2;
-            color: #991b1b;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 16px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            margin-bottom: 18px;
-            font-size: 14px;
-        }
-        button {
-            width: 100%;
-            border: none;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .meta {
-            margin-top: 16px;
-            font-size: 13px;
-            color: #475569;
-            text-align: center;
-        }
-    </style>
+    <meta name="theme-color" content="#f5f5f1">
+    <title>Sign in | Stockroom</title>
+    <link rel="stylesheet" href="<?= htmlspecialchars(base_url('css/stockroom.css')) ?>">
 </head>
-<body>
-    <div class="card">
-        <h2>Login</h2>
+<body class="auth-page">
+    <main class="login-card">
+        <div class="brand-mark" aria-hidden="true">S</div>
+        <p class="eyebrow">STOCKROOM / INVENTORY</p>
+        <h1>Good to see you.</h1>
+        <p class="muted">Sign in to manage your products.</p>
 
         <?php if (!empty($error)): ?>
-            <div class="alert"><?= htmlspecialchars($error) ?></div>
+            <div class="alert" role="alert"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+        <?php if (!empty($success)): ?>
+            <div class="success" role="status"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="<?= site_url('auth/authenticate') ?>">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+        <form class="login-form" method="post" action="<?= site_url('auth/authenticate') ?>">
+            <label for="username">Username
+                <input type="text" id="username" name="username" autocomplete="username" value="<?= htmlspecialchars($username ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
+            </label>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password">Password
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+            </label>
 
-            <button type="submit">Login</button>
+            <button class="btn btn-primary btn-wide" type="submit">Sign in</button>
         </form>
 
-        <div class="meta">Demo credentials: bacaypearlann@gmail.com / 12345</div>
-    </div>
+        <p class="login-note">Need an account? <a class="auth-link" href="<?= site_url('register') ?>">Register</a></p>
+    </main>
 </body>
 </html>

@@ -43,10 +43,24 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |
 */
 /** @var object $router **/
-// Old web routes (Lab 4) and migration routes are disabled for the API deployment.
-// Run migrations from the CLI instead: php lava migration
+// ===== Server-rendered Stockroom pages =====
+$router->get('/', 'AuthController::index');
+$router->get('/login', 'AuthController::login');
+$router->get('/register', 'AuthController::register');
+$router->post('/auth/register', 'AuthController::create_account');
+$router->post('/auth/authenticate', 'AuthController::authenticate');
+$router->post('/auth/logout', 'AuthController::logout');
+
+$router->get('/products', 'ProductsController::index');
+$router->get('/products/create', 'ProductsController::create');
+$router->post('/products/store', 'ProductsController::store');
+$router->get('/products/edit/{id}', 'ProductsController::edit')->where_number('id');
+$router->post('/products/update/{id}', 'ProductsController::update')->where_number('id');
+$router->post('/products/delete/{id}', 'ProductsController::delete')->where_number('id');
 
 // ===== API routes (Lab 6) =====
+$router->get('/api', 'ApiInfoController::index');
+
 $router->post('/api/auth/register', 'AuthApiController::register');
 $router->post('/api/auth/create', 'AuthApiController::register');
 $router->post('/api/auth/login', 'AuthApiController::login');

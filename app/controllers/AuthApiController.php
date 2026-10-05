@@ -24,12 +24,18 @@ class AuthApiController extends Controller
         $this->api->require_method('POST');
         $data = $this->api->body();
 
-        $username = $data['username'] ?? '';
-        $email    = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
+        $username = is_string($data['username'] ?? null) ? trim($data['username']) : '';
+        $email    = is_string($data['email'] ?? null) ? trim($data['email']) : '';
+        $password = is_string($data['password'] ?? null) ? $data['password'] : '';
 
         if ($username === '' || $email === '' || $password === '') {
             $this->api->respond_error('username, email and password are required', 422);
+        }
+        if (strlen($username) > 100) {
+            $this->api->respond_error('username must be 100 characters or fewer', 422);
+        }
+        if (strlen($email) > 255) {
+            $this->api->respond_error('email must be 255 characters or fewer', 422);
         }
         if (!filter_var(htmlspecialchars_decode($email), FILTER_VALIDATE_EMAIL)) {
             $this->api->respond_error('Invalid email address', 422);
